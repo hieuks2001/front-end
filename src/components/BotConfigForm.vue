@@ -1,161 +1,209 @@
 <template>
-  <div class="flex items-center justify-between bg-slate-400 p-4 rounded">
+  <div class="mb-4 border rounded p-2">
+    <span class="font-bold text-lg text-cyan-500">WALLET</span> <br />
+    <span v-if="wallet.length === 0">Please update API Key and Secret Key!</span>
+    <n-tag
+      v-for="(coin, index) in wallet"
+      class="mr-4 mt-1 border rounded"
+      :color="{ color: '#426fe9', textColor: '#fff' }"
+    >
+      <b> {{ index }} : {{ coin }}</b>
+    </n-tag>
+  </div>
+  <div class="flex items-center justify-between border p-4 rounded">
     <div>
-      <span class="font-semibold text-lg mr-3">{{bots }}</span>
-      <!-- MODAL -->
-      <a-button type="primary" size="small" @click="showModal">
-        <font-awesome-icon icon="fa-doutone fa-gears"
-      /></a-button>
-      <a-modal
-        v-model:visible="visible"
-        title="Config BOT"
-        ok-text="Save"
-        cancel-text="Cancel"
-        @ok="onOk"
+      <n-form
+        ref="formRef"
+        :model="formState"
+        name="form_in_modal"
+        label-placement="top"
       >
-        <a-form
-          ref="formRef"
-          :model="formState"
-          name="form_in_modal"
-          :label-col="{ span: 8 }"
-          :wrapper-col="{ span: 16 }"
-        >
-          <a-form-item
+        <n-grid :span="12" :x-gap="12">
+          <n-form-item-gi
+            :span="12"
             label="COIN"
             name="coin"
             :rules="[
               {
                 required: true,
-                message: 'Please select coin to run bot',
               },
             ]"
           >
-            <a-select
+            <n-select
               v-model:value="formState.coin"
-              placeholder="Please select coin to run bot"
+              :disabled="bot && true"
+              :options="options"
             >
-              <a-select-option value="BTC">BTC</a-select-option>
-              <a-select-option value="ETH">ETH</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item
+            </n-select>
+          </n-form-item-gi>
+          <n-form-item-gi
+            :span="12"
             label="Min buy"
-            name="Min buy"
+            name="minUSDT"
+            path="inputValue"
             :rules="[
               {
                 required: true,
-                message: 'Please input min buy (over 10USDT)!',
               },
             ]"
           >
-            <a-input v-model:value="formState.min" />
-          </a-form-item>
-          <a-form-item
+            <n-input v-model:value="formState.minUSDT" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="12"
             label="Max buy"
-            name="Max buy"
-            :rules="[{ required: true, message: 'Please input max buy!' }]"
+            name="maxUSDT"
+            :rules="[{ required: true }]"
           >
-            <a-input v-model:value="formState.max" />
-          </a-form-item>
-          <a-form-item
+            <n-input v-model:value="formState.maxUSDT" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="12"
             label="Max trade price"
-            name="Max trade price"
+            name="limitPriceBuy"
             :rules="[
               {
                 required: true,
-                message: 'Please input max trade price can buy!',
               },
             ]"
           >
-            <a-input v-model:value="formState.maxbuy" />
-          </a-form-item>
-          <a-form-item
+            <n-input v-model:value="formState.limitPriceBuy" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="12"
             label="Profit"
-            name="Profit"
+            name="profit"
             :rules="[
               {
                 required: true,
-                message: 'Please input profit you wanna get!',
               },
             ]"
           >
-            <a-input v-model:value="formState.minprofit" />
-          </a-form-item>
-          <a-form-item
+            <n-input v-model:value="formState.profit" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="12"
             label="Stop loss"
-            name="Stop loss"
+            name="stoploss"
             :rules="[
               {
                 required: true,
-                message: 'Please input trade price you want stop bot!',
               },
             ]"
           >
-            <a-input v-model:value="formState.stoploss" />
-          </a-form-item>
-          <a-form-item
+            <n-input v-model:value="formState.stoploss" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="12"
             label="DCA"
-            name="DCA"
-            :rules="[{ required: true, message: 'Please input DCA!' }]"
+            name="limitDCA"
+            :rules="[{ required: true }]"
           >
-            <a-input v-model:value="formState.dca" />
-          </a-form-item>
-          <a-form-item label="Mode" name="mode"  :rules="[{ required: true, message: 'Please input DCA!' }]">
-            <a-radio-group v-model:value="formState.resource">
-              <a-radio value="HOLD">HOLD</a-radio>
-              <a-radio value="STOP_LOSS">STOP_LOSS</a-radio>
-              <a-radio value="DCA">DCA</a-radio>
-            </a-radio-group>
-          </a-form-item>
-        </a-form>
-      </a-modal>
+            <n-input v-model:value="formState.limitDCA" type="number"/>
+          </n-form-item-gi>
+
+          <n-form-item-gi
+            :span="24"
+            label="Mode"
+            name="mode"
+            :rules="[{ required: true }]"
+          >
+            <n-radio-group v-model:value="formState.option">
+              <n-radio value="HOLD">HOLD</n-radio>
+              <n-radio value="STOP_LOSS">STOP_LOSS</n-radio>
+              <n-radio value="DCA">DCA</n-radio>
+            </n-radio-group>
+          </n-form-item-gi>
+          <n-gi :span="24">
+            <div style="display: flex; justify-content: flex-end">
+              <n-button type="primary" strong @click="onOk">
+                {{ bot ? "Save" : "Start" }}
+              </n-button>
+            </div>
+          </n-gi>
+        </n-grid>
+      </n-form>
     </div>
 
     <!-- MODE -->
-    <div>
+    <!-- <div>
       <span class="text-lg font-semibold"
         >Mode: <span class="text-red-500">HOLD</span></span
       >
-    </div>
+    </div> -->
     <!-- Button start/stop -->
-    <div>
-      <a-button type="primary"
-        ><font-awesome-icon icon="fa-solid fa-play"
-      /></a-button>
-    </div>
+    <!-- <div>
+      <n-button type="primary"
+        ><font-awesome-icon icon="fn-solid fn-play"
+      /></n-button>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { ref, reactive, toRaw } from "vue";
-import { onMounted } from "vue";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faGears, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
+import { CashOutline as CashIcon } from "@vicons/ionicons5";
+import axios from "axios";
+import pusher from "../plugins/pusher";
 
-/* add icons to the library */
-library.add(faGears, faPlay);
-export default {
-  props: {
-    bots: String, // Define the type if necessary
+import { createDiscreteApi } from "naive-ui";
+const { notification } = createDiscreteApi(["notification"], {
+  configProviderProps: {
+    placement: "top-right",
   },
-  setup() {
+});
+
+export default {
+  coreplugins: {
+    preflight: false,
+  },
+  components: {
+    CashIcon,
+  },
+  props: {
+    bot: Object,
+  },
+  setup(props) {
     const formRef = ref();
     const visible = ref(false);
+
+    const bot = props.bot;
     const formState = reactive({
-      title: "",
-      description: "",
-      modifier: "public",
+      botId: bot?._id,
+      minUSDT: bot?.minUSDT,
+      coin: bot?.coin,
+      maxUSDT: bot?.maxUSDT,
+      limitPriceBuy: bot?.limitPriceBuy,
+      profit: bot?.profit,
+      stoploss: bot?.stoploss,
+      limitDCA: bot?.limitDCA,
+      option: bot?.option,
     });
 
     const onOk = async () => {
       try {
-        const values = await formRef.value?.validateFields();
+        const values = formState;
         if (values) {
-          console.log("Received values of form:", values);
-          console.log("formState:", toRaw(formState));
-          visible.value = false;
-          formRef.value?.resetFields();
-          console.log("reset formState:", toRaw(formState));
+          await axios
+            .post("bot-save", formState)
+            .then((res) => {
+              console.log(res);
+              handleShowMessage(
+                "success",
+                "Successfully",
+                "BOT is running now!"
+              );
+              visible.value = false;
+              formState.value?.resetFields();
+            })
+            .catch((err) => {
+              handleShowMessage("error", "FAILED", err.response.data.message);
+            });
         }
       } catch (error) {
         console.log("Validate Failed:", error);
@@ -164,11 +212,45 @@ export default {
 
     // Using onMounted to access the formRef after the component is mounted
     onMounted(() => {
-      console.log("formRef:", formRef.value);
+      const channel = pusher.subscribe(localStorage.getItem("username"));
+
+      channel.bind("wallet", (data) => {
+        wallet.value = data.wallet;
+      });
     });
+
+    // onUnmounted(() => {
+    //   pusher.unsubscribe("my-channel");
+    // });
 
     const showModal = () => {
       visible.value = true;
+    };
+
+    const wallet = ref([]);
+    const options = ref([]);
+
+    const response = async () => {
+      const res = await axios.get("user/wallet");
+
+      if (res) {
+        wallet.value = res.data.wallet;
+        options.value = Object.entries(wallet.value)
+          .filter(([key, value]) => key !== "USDT") // Filter out 'USDT'
+          .map(([key, value], index) => ({
+            label: key,
+            value: key,
+          }));
+      }
+    };
+    response();
+
+    const handleShowMessage = (type, title, content) => {
+      notification[type]({
+        title: title,
+        meta: content,
+        duration: 3000,
+      });
     };
 
     return {
@@ -177,6 +259,8 @@ export default {
       formState,
       onOk,
       showModal,
+      wallet,
+      options,
     };
   },
 };

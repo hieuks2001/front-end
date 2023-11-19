@@ -3,6 +3,9 @@
     <div
       class="min-h-screen bg-gradient-to-tl from-green-400 to-indigo-900 w-full py-16 px-4"
     >
+      <n-notification-provider>
+        <content />
+      </n-notification-provider>
       <div class="flex flex-col items-center justify-center">
         <!-- <div class="text-center">
           <img src="images/logo2.png" alt="" srcset="" class="logo" />
@@ -134,9 +137,16 @@
 
 <script>
 import axios from "axios";
-import { notification } from "ant-design-vue";
+import { createDiscreteApi } from "naive-ui";
+import { defineComponent } from "vue";
 
-export default {
+const { notification } = createDiscreteApi(["notification"], {
+  configProviderProps: {
+    placement: "top-right",
+  },
+});
+
+export default defineComponent({
   name: "RegisterForm",
   data() {
     return {
@@ -188,20 +198,24 @@ export default {
       axios
         .post("register", this.register)
         .then((res) => {
-          notification['success']({
-            message: "Success",
-            description:
-              "User created successfully!",
-          });
+          this.handleShowMessage('success' ,'Success', "<b>User created successfully!");    
         })
         .catch((err) => {
-          notification['error']({
-            message: "Failed",
-            description:
-              err.response.data,
-          });
+          this.handleShowMessage('error', 'FAILED',err.response.data.message);
         });
     },
   },
-};
+  setup() {
+    const handleShowMessage = (type, title, content) => {
+      notification[type]({
+        title: title,
+        meta: content,
+        duration: 3000,
+      });
+    };
+    return {
+      handleShowMessage,
+    };
+  },
+});
 </script>

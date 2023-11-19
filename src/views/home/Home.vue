@@ -1,17 +1,7 @@
 <template>
   <div class="flex flex-row">
     <div class="basis-1/4 p-4">
-      <div>
-        <a-card title="Wallet" size="small" class="gap-y-4">
-          <a-tag>USDT: 10000</a-tag>
-          <a-tag>USDT: 10000</a-tag>
-          <a-tag>USDT: 10000</a-tag>
-          <a-tag>USDT: 10000</a-tag>
-          <a-tag>USDT: 10000</a-tag>
-        </a-card>
-      </div>
-      <br />
-      <BotConfigForm bots="BTC" />
+      <BotConfigForm  />
     </div>
     <div class="basis-1/2">
       <Chart
@@ -21,8 +11,10 @@
           timezone: 'Asia/Ho_Chi_Minh',
           locale: 'en',
           interval: '1',
+          height: '500px',
         }"
       />
+      <BotStatus />
     </div>
     <div class="basis-1/4">03</div>
   </div>
@@ -33,8 +25,9 @@
 
 <script>
 import BotConfigForm from "../../components/BotConfigForm.vue";
+import BotStatus from "../../components/BotStatus.vue";
 import { Chart, Snaps, Screener } from "vue-tradingview-widgets";
-import axios from "axios";
+
 
 export default {
   name: "Home",
@@ -43,26 +36,8 @@ export default {
     Snaps,
     Screener,
     BotConfigForm,
+    BotStatus,
   },
-  data() {
-    return {
-      items: [],
-    };
-  },
-  mounted() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      try {
-        const response = await axios.get(
-          "https://jsonplaceholder.typicode.com/todos"
-        );
-        this.items = response.data;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    },
-  },
+  props: ['user'],
 };
 </script>
