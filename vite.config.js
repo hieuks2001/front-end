@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       '@views': '/src/views',
       '@components': '/src/components',
+      '@router' : '/src/router',
     }
   },
 })

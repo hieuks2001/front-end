@@ -3,6 +3,9 @@
     <div
       class="min-h-screen bg-gradient-to-tl from-green-400 to-indigo-900 w-full py-16 px-4"
     >
+      <n-notification-provider>
+        <content />
+      </n-notification-provider>
       <div class="flex flex-col items-center justify-center mt-16">
         <!-- <div class="text-center">
           <img src="images/logo2.png" alt="" srcset="" class="logo" />
@@ -87,38 +90,47 @@
 </template>
 <script>
 import axios from "axios";
-import { notification } from "ant-design-vue";
+import { createDiscreteApi } from "naive-ui";
+import router from "@router/index";
+import { ref } from "vue";
+
+const { notification } = createDiscreteApi(["notification"], {
+  configProviderProps: {
+    placement: "top-right",
+  },
+});
 
 export default {
   name: "LoginForm",
-  data() {
-    return {
-      login: {
-        username: "",
-        password: "",
-      },
-      show: false,
-    };
-  },
-  methods: {
-    async handleSubmit() {
-       await axios
-        .post("login", this.login)
+  setup() {
+    const login = ref({});
+
+    const handleSubmit = async () => {
+      const { username, password } = login.value;
+      await axios
+        .post("login", { username, password })
         .then((res) => {
-         
           localStorage.setItem("token", res.data.accessToken);
-          this.$router.push('/');
+          localStorage.setItem("username", username);
+          router.push("/");
         })
         .catch((err) => {
-          console.log(err);
-          notification["error"]({
-            message: "Failed",
-            description: err.response.data.message,
-            duration: 3,
-            rtl: true,
-          });
+          handleShowMessage("error", "FAILED", err.response.data);
         });
-    },
+    };
+
+    const handleShowMessage = (type, title, content) => {
+      notification[type]({
+        title: title,
+        meta: content,
+        duration: 3000,
+      });
+    };
+    return {
+      handleShowMessage,
+      login,
+      handleSubmit,
+    };
   },
 };
 </script>
