@@ -1,7 +1,10 @@
 <template>
   <div class="mb-4 border rounded p-2">
     <span class="font-bold text-lg text-cyan-500">WALLET</span> <br />
-    <span v-if="wallet.length === 0">Please update API Key and Secret Key!</span>
+    <span v-if="wallet.length === 0"
+      >Please update
+      <a href="/profile" class="text-cyan-500">API Key - Secret Key!</a></span
+    >
     <n-tag
       v-for="(coin, index) in wallet"
       class="mr-4 mt-1 border rounded"
@@ -36,7 +39,7 @@
             >
             </n-select>
           </n-form-item-gi>
-          <n-form-item-gi
+          <!-- <n-form-item-gi
             :span="12"
             label="Min buy"
             name="minUSDT"
@@ -47,21 +50,23 @@
               },
             ]"
           >
-            <n-input v-model:value="formState.minUSDT" type="number"/>
-          </n-form-item-gi>
+            <n-input-number v-model:value="formState.minUSDT" />
+          </n-form-item-gi> -->
 
           <n-form-item-gi
             :span="12"
-            label="Max buy"
+            label="Capital"
             name="maxUSDT"
             :rules="[{ required: true }]"
           >
-            <n-input v-model:value="formState.maxUSDT" type="number"/>
+            <n-input-number v-model:value="formState.maxUSDT" :min="10">
+              <template #prefix> USDT </template>
+            </n-input-number>
           </n-form-item-gi>
 
           <n-form-item-gi
             :span="12"
-            label="Max trade price"
+            label="Max price of Coin"
             name="limitPriceBuy"
             :rules="[
               {
@@ -69,7 +74,9 @@
               },
             ]"
           >
-            <n-input v-model:value="formState.limitPriceBuy" type="number"/>
+            <n-input-number v-model:value="formState.limitPriceBuy" :min="0">
+              <template #prefix> USDT </template>
+            </n-input-number>
           </n-form-item-gi>
 
           <n-form-item-gi
@@ -82,7 +89,9 @@
               },
             ]"
           >
-            <n-input v-model:value="formState.profit" type="number"/>
+            <n-input-number v-model:value="formState.profit" :min="0">
+              <template #prefix> USDT </template>
+            </n-input-number>
           </n-form-item-gi>
 
           <n-form-item-gi
@@ -95,7 +104,9 @@
               },
             ]"
           >
-            <n-input v-model:value="formState.stoploss" type="number"/>
+            <n-input-number v-model:value="formState.stoploss" :min="0">
+              <template #prefix> USDT </template>
+            </n-input-number>
           </n-form-item-gi>
 
           <n-form-item-gi
@@ -104,18 +115,20 @@
             name="limitDCA"
             :rules="[{ required: true }]"
           >
-            <n-input v-model:value="formState.limitDCA" type="number"/>
+            <n-input-number v-model:value="formState.limitDCA" :min="0">
+              <template #prefix> USDT </template>
+            </n-input-number>
           </n-form-item-gi>
 
           <n-form-item-gi
             :span="24"
-            label="Mode"
+            label="Option"
             name="mode"
             :rules="[{ required: true }]"
           >
             <n-radio-group v-model:value="formState.option">
               <n-radio value="HOLD">HOLD</n-radio>
-              <n-radio value="STOP_LOSS">STOP_LOSS</n-radio>
+              <n-radio value="STOP_LOSS">STOP LOSS</n-radio>
               <n-radio value="DCA">DCA</n-radio>
             </n-radio-group>
           </n-form-item-gi>
@@ -175,7 +188,6 @@ export default {
     const bot = props.bot;
     const formState = reactive({
       botId: bot?._id,
-      minUSDT: bot?.minUSDT,
       coin: bot?.coin,
       maxUSDT: bot?.maxUSDT,
       limitPriceBuy: bot?.limitPriceBuy,
@@ -196,7 +208,7 @@ export default {
               handleShowMessage(
                 "success",
                 "Successfully",
-                "BOT is running now!"
+                "Saved bot configuration successfully!"
               );
               visible.value = false;
               formState.value?.resetFields();
@@ -243,6 +255,7 @@ export default {
           }));
       }
     };
+
     response();
 
     const handleShowMessage = (type, title, content) => {

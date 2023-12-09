@@ -104,6 +104,7 @@ export default {
   name: "LoginForm",
   setup() {
     const login = ref({});
+    const show = ref(false);
 
     const handleSubmit = async () => {
       const { username, password } = login.value;
@@ -115,6 +116,7 @@ export default {
           router.push("/");
         })
         .catch((err) => {
+          console.log(err);
           handleShowMessage("error", "FAILED", err.response.data);
         });
     };
@@ -130,6 +132,7 @@ export default {
       handleShowMessage,
       login,
       handleSubmit,
+      show,
     };
   },
 };
