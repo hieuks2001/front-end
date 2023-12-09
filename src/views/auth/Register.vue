@@ -139,6 +139,7 @@
 import axios from "axios";
 import { createDiscreteApi } from "naive-ui";
 import { defineComponent } from "vue";
+import router from "@router/index";
 
 const { notification } = createDiscreteApi(["notification"], {
   configProviderProps: {
@@ -198,10 +199,16 @@ export default defineComponent({
       axios
         .post("register", this.register)
         .then((res) => {
-          this.handleShowMessage('success' ,'Success', "<b>User created successfully!");    
+          this.handleShowMessage(
+            "success",
+            "Success",
+            "User created successfully!"
+          );
+          router.push("login");
         })
         .catch((err) => {
-          this.handleShowMessage('error', 'FAILED',err.response.data.message);
+          console.log(err);
+          this.handleShowMessage("error", "FAILED", err.response.data);
         });
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 border rounded mt-5">
+  <div class="p-4 border rounded">
     <span class="text-lg font-bold">Bot status</span>
     <n-table>
       <thead>

@@ -5,7 +5,7 @@
         class="container mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center"
       >
         <a class="flex title-font font-medium items-center">
-          <span class="ml-3 text-xl">BOT TRADE</span>
+          <a class="ml-3 text-xl" href="/">BOT TRADE</a>
         </a>
         <nav
           class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center text-center"
@@ -15,12 +15,12 @@
               >Home</a
             ></router-link
           >
-          <router-link to="/"
+          <router-link to="/news"
             ><a class="mr-10 text-xl font-semibold hover:text-blue-500"
               >News</a
             ></router-link
           >
-          <router-link to="/"
+          <router-link to="/predict"
             ><a class="mr-10 text-xl font-semibold hover:text-blue-500"
               >Predict Price</a
             ></router-link
